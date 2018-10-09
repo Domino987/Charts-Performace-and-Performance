@@ -33,7 +33,7 @@ class PlainXYPlot extends PureComponent<IProps> {
                     <FlexibleWidthXYPlot
                         height={500}
                         className={classes.graph}>
-                        <XAxis title="X Axis" position="end" />
+                        <XAxis title="X Axis" position="end" tickFormat={this.tickFormatter} />
                         <YAxis title="Y Axis" tickFormat={this.tickFormatter} />
 
                         <HorizontalGridLines />
