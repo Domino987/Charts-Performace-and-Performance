@@ -1,17 +1,10 @@
-import { Card, CardContent, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
+import { Card, CardActions, CardContent, CardHeader, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
 import autobind from 'autobind-decorator';
 import React, { PureComponent } from 'react';
 import { FlexibleWidthXYPlot, Hint, HorizontalGridLines, LineSeries, VerticalGridLines, XAxis, YAxis } from 'react-vis';
+import { formatHint } from '../utils/utils';
 
 const styles = (theme: Theme) => createStyles({
-
-    graph: {
-        margin: theme.spacing.unit
-    },
-    paper: {
-        height: '520px',
-        margin: theme.spacing.unit * 2
-    },
 });
 
 interface IProps extends WithStyles<typeof styles> {
@@ -25,6 +18,8 @@ interface IState {
 @autobind
 class SimpleInteraction extends PureComponent<IProps, IState> {
 
+    private rendered = 0;
+
     constructor(props: IProps) {
         super(props);
         this.state = {
@@ -32,14 +27,17 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
         }
     }
     public render() {
-        const { classes, dataPoints } = this.props;
+        const { dataPoints } = this.props;
         const { hoveringDatapoint } = this.state;
         return (
-            <Card className={classes.paper}>
+            <Card>
+                <CardHeader
+                    title={"Simple Interaction"} />
                 <CardContent>
                     <FlexibleWidthXYPlot
                         height={500}
-                        className={classes.graph}>
+                        xType={'time'}
+                        onMouseLeave={this.onLeave}>
                         <XAxis title="X Axis" position="end" />
                         <YAxis title="Y Axis" />
 
@@ -51,15 +49,25 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
                                     key={index}
                                     data={series}
                                     onNearestX={this.onNearestX}
-                                    // onNearestX={index === 0 ?  this.onNearestX | undefined}
+                                // onNearestX={index === 0 ?  this.onNearestX | undefined}
                                 />
                             )
                         }
                         {
-                            hoveringDatapoint ? <Hint value={hoveringDatapoint}/> : null
+                            hoveringDatapoint ?
+                                <Hint
+                                    value={hoveringDatapoint}
+                                    format={formatHint}
+                                />
+                                : null
                         }
                     </FlexibleWidthXYPlot>
                 </CardContent>
+                <CardActions>
+                    <div>
+                        {"Rendered: " + (++this.rendered)}
+                    </div>
+                </CardActions>
             </Card>
         );
     }
@@ -68,5 +76,12 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
             hoveringDatapoint: datapoint
         });
     }
+    private onLeave(): void {
+        this.setState({
+            hoveringDatapoint: null
+        });
+    }
+
+
 }
 export default withStyles(styles)(SimpleInteraction);

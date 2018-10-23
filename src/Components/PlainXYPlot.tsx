@@ -1,17 +1,9 @@
-import { Card, CardContent, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
+import { Card, CardActions, CardContent,CardHeader, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
 import autobind from 'autobind-decorator';
 import React, { PureComponent } from 'react';
 import { FlexibleWidthXYPlot, HorizontalGridLines, LineSeries, VerticalGridLines, XAxis, YAxis } from 'react-vis';
 
 const styles = (theme: Theme) => createStyles({
-
-    graph: {
-        margin: theme.spacing.unit
-    },
-    paper: {
-        height: '520px',
-        margin: theme.spacing.unit * 2
-    },
 });
 
 interface IProps extends WithStyles<typeof styles> {
@@ -21,17 +13,21 @@ interface IProps extends WithStyles<typeof styles> {
 @autobind
 class PlainXYPlot extends PureComponent<IProps> {
 
+    private rendered = 0;
+
     constructor(props: IProps) {
         super(props);
     }
     public render() {
-        const { classes, dataPoints } = this.props;
+        const { dataPoints } = this.props;
         return (
-            <Card className={classes.paper}>
+            <Card>
+                <CardHeader
+                    title={"Simple Chart"} />
                 <CardContent>
                     <FlexibleWidthXYPlot
                         height={500}
-                        className={classes.graph}>
+                        xType={'time'}>                        
                         <XAxis title="X Axis" position="end" />
                         <YAxis title="Y Axis" />
 
@@ -47,6 +43,11 @@ class PlainXYPlot extends PureComponent<IProps> {
                         }
                     </FlexibleWidthXYPlot>
                 </CardContent>
+                <CardActions>
+                    <div>
+                        {"Rendered: " + (++this.rendered)}
+                    </div>
+                </CardActions>
             </Card>
         );
     }
