@@ -59,9 +59,9 @@ class App extends PureComponent<IProps, IState> {
       seriesNumber: 1,
       step: 0,
     };
-    for (let i = 0; i < 5; i = i + 1) {
+    for (let i = 0; i < 5; i++) {
       const series = [];
-      for (let k = 0; k < 10000; k = k + 1) {
+      for (let k = 0; k < 10000; k++) {
         series.push({
           x: k + 1,
           y: i * 1000 + k + 1
@@ -86,12 +86,13 @@ class App extends PureComponent<IProps, IState> {
         </AppBar>
         <Grid container={true} spacing={16}>
           <Grid item={true} xs={5}>
-            <Typography id="label">Datapoints</Typography>
+            <Typography id="label">Datapoints:  <span>{dataPoints}</span></Typography>
             <Slider value={dataPoints} min={100} max={10000} step={100} aria-labelledby="label" onChange={this.setDatapoints} />
+           
           </Grid>
           <Grid item={true} xs={1} />
           <Grid item={true} xs={5}>
-            <Typography id="label">Series</Typography>
+            <Typography id="label">Series: <span>{seriesNumber}</span></Typography>
             <Slider value={seriesNumber} min={1} max={5} step={1} aria-labelledby="label" onChange={this.setSeries} />
           </Grid>
         </Grid>
@@ -145,7 +146,7 @@ class App extends PureComponent<IProps, IState> {
   }
   private getDataPoints(seriesNumber: number, points: number): IDatapoint[][] {
     const array = [];
-    for (let i = 0; i < seriesNumber; i = i + 1) {
+    for (let i = 0; i < seriesNumber; i++) {
       array.push(this.data[i].slice(0, points));
     }
     return array;

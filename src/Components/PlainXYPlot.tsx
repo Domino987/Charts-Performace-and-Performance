@@ -18,9 +18,10 @@ interface IProps extends WithStyles<typeof styles> {
     dataPoints: IDatapoint[][];
 }
 
+
+
 @autobind
 class PlainXYPlot extends PureComponent<IProps> {
-
     constructor(props: IProps) {
         super(props);
     }
@@ -32,8 +33,8 @@ class PlainXYPlot extends PureComponent<IProps> {
                     <FlexibleWidthXYPlot
                         height={500}
                         className={classes.graph}>
-                        <XAxis title="X Axis" position="end" />
-                        <YAxis title="Y Axis" />
+                        <XAxis title="X Axis" position="end" tickFormat={this.tickFormatter} />
+                        <YAxis title="Y Axis" tickFormat={this.tickFormatter} />
 
                         <HorizontalGridLines />
                         <VerticalGridLines />
@@ -50,5 +51,13 @@ class PlainXYPlot extends PureComponent<IProps> {
             </Card>
         );
     }
+
+    @autobind
+    private tickFormatter(n: number): number|string {
+        if (n >= 1000) {
+            return n/1000 + "K";
+        }
+        return n
+    } 
 }
 export default withStyles(styles)(PlainXYPlot);
