@@ -1,5 +1,5 @@
 interface IDatapoint {
-    x: Date,
+    x: number,
     y: number
 }
 
@@ -8,10 +8,4 @@ interface IArea {
     top: number,
     right: number,
     left: number,
-}
-interface IChartBounds {    
-    bottom: number,
-    top: number,
-    right: Date,
-    left: Date,
 }

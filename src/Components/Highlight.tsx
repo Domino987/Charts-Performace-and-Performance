@@ -281,7 +281,7 @@ export default class Highlight extends AbstractSeries {
         <rect
           className="mouse-target"
           fill="black"
-          opacity="0"
+          opacity="0.3"
           pointerEvents="none"
           x={Math.max(0, marginLeft)}
           y={Math.max(0, marginTop)}
@@ -306,14 +306,10 @@ export default class Highlight extends AbstractSeries {
     this.stopDrawing();
   }
   public stopRightCLick(e: React.TouchEvent<SVGGElement>): boolean {
-    // tslint:disable-next-line:no-console
-    console.log('right1');
     e.preventDefault();
     return false;
   }
   private onContextClick(e: React.MouseEvent): boolean {
-    // tslint:disable-next-line:no-console
-    console.log('right');
     e.preventDefault();
     return false;
   }  

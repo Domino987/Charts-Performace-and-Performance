@@ -1,7 +1,8 @@
 import { Card, CardActions, CardContent,CardHeader, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
 import autobind from 'autobind-decorator';
 import React, { PureComponent } from 'react';
-import { FlexibleWidthXYPlot, HorizontalGridLines, LineSeries, VerticalGridLines, XAxis, YAxis } from 'react-vis';
+import { FlexibleWidthXYPlot, LineSeries, XAxis, YAxis } from 'react-vis';
+import { tickFormatter } from 'src/utils/utils';
 
 const styles = (theme: Theme) => createStyles({
 });
@@ -9,6 +10,8 @@ const styles = (theme: Theme) => createStyles({
 interface IProps extends WithStyles<typeof styles> {
     dataPoints: IDatapoint[][];
 }
+
+
 
 @autobind
 class PlainXYPlot extends PureComponent<IProps> {
@@ -26,13 +29,9 @@ class PlainXYPlot extends PureComponent<IProps> {
                     title={"Simple Chart"} />
                 <CardContent>
                     <FlexibleWidthXYPlot
-                        height={500}
-                        xType={'time'}>                        
-                        <XAxis title="X Axis" position="end" />
-                        <YAxis title="Y Axis" />
-
-                        <HorizontalGridLines />
-                        <VerticalGridLines />
+                        height={500}>
+                        <XAxis title="X Axis" position="end" tickFormat={tickFormatter} />
+                        <YAxis title="Y Axis" tickFormat={tickFormatter} />
                         {
                             dataPoints.map((series: IDatapoint[], index: number) =>
                                 <LineSeries
@@ -51,5 +50,6 @@ class PlainXYPlot extends PureComponent<IProps> {
             </Card>
         );
     }
+
 }
 export default withStyles(styles)(PlainXYPlot);

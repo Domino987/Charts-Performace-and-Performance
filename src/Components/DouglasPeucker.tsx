@@ -4,6 +4,7 @@ import autobind from 'autobind-decorator';
 import memoizeOne from 'memoize-one';
 import React, { PureComponent } from 'react';
 import { Hint, MarkSeries, XYPlot } from 'react-vis';
+import { ramerDouglasPeuckerSimplyfication } from 'src/utils/utils';
 import { formatHint } from '../utils/utils';
 import AdvancedVoronio from './AdvancedVoronoi';
 
@@ -20,13 +21,21 @@ interface IState {
     hoveringDatapoint: IDatapoint | null,
     isZooming: boolean,
     rendered: number,
-    zoomedChartBounds: IArea | null,
+    zoomedChartBounds: IArea | null
 }
 
 @autobind
 class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
 
     private propsChartBounds = memoizeOne((datapoints: IDatapoint[][]) => this.getPropsChartBounds(datapoints));
+
+    private reducedData = memoizeOne((dataPoints: IDatapoint[][]) => {
+        const newData = [] as IDatapoint[][];
+        dataPoints.forEach((series: IDatapoint[]) => {
+            newData.push(ramerDouglasPeuckerSimplyfication(series, 1, true));
+        });
+        return newData;
+    });
 
     constructor(props: IProps) {
         super(props);
@@ -35,7 +44,7 @@ class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
             isZooming: false,
             rendered: 1,
             showVoronoi: false,
-            zoomedChartBounds: null
+            zoomedChartBounds: null,
         }
     }
     public render() {
@@ -46,7 +55,7 @@ class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
             <Card
                 onMouseLeave={this.mouseLeave}>
                 <CardHeader
-                    title={"Advanced Voronio"}
+                    title={"Douglas Peucker Algorithm"}
                     action={
                         <div>
                             <FormControlLabel
@@ -87,11 +96,12 @@ class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
                     </XYPlot>
                     <AdvancedVoronio
                         showVoronoi={showVoronoi}
+                        simplyfiyData={true}
                         updateChartBounds={this.updateChartBounds}
                         chartBounds={chartBounds}
                         increaseRenderCount={this.increaseRenderCount}
                         setHovering={this.setHovering}
-                        data={dataPoints} />
+                        data={this.reducedData(dataPoints)} />
                 </CardContent>
                 <CardActions>
                     <div>

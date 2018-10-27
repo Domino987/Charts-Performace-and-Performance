@@ -1,10 +1,11 @@
 import { Card, CardActions, CardContent, CardHeader, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
 import autobind from 'autobind-decorator';
 import React, { PureComponent } from 'react';
-import { FlexibleWidthXYPlot, Hint, HorizontalGridLines, LineSeries, VerticalGridLines, XAxis, YAxis } from 'react-vis';
-import { formatHint } from '../utils/utils';
+import { FlexibleWidthXYPlot, Hint, LineSeries,MarkSeries, XAxis, YAxis } from 'react-vis';
+import { formatHint, tickFormatter } from 'src/utils/utils';
 
 const styles = (theme: Theme) => createStyles({
+    
 });
 
 interface IProps extends WithStyles<typeof styles> {
@@ -36,13 +37,9 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
                 <CardContent>
                     <FlexibleWidthXYPlot
                         height={500}
-                        xType={'time'}
                         onMouseLeave={this.onLeave}>
                         <XAxis title="X Axis" position="end" />
-                        <YAxis title="Y Axis" />
-
-                        <HorizontalGridLines />
-                        <VerticalGridLines />
+                        <YAxis title="Y Axis" tickFormat={tickFormatter}/>
                         {
                             dataPoints.map((series: IDatapoint[], index: number) =>
                                 <LineSeries
@@ -56,9 +53,15 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
                         {
                             hoveringDatapoint ?
                                 <Hint
-                                    value={hoveringDatapoint}
                                     format={formatHint}
-                                />
+                                    value={hoveringDatapoint} />
+                                : null
+                        }
+                        {
+                            hoveringDatapoint ?
+                                <MarkSeries
+                                    data={[hoveringDatapoint]}
+                                    color={'red'} />
                                 : null
                         }
                     </FlexibleWidthXYPlot>

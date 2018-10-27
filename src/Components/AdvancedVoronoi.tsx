@@ -1,68 +1,69 @@
 import autobind from 'autobind-decorator';
+import memoizeOne from 'memoize-one';
 import * as React from 'react';
-import { FlexibleXYPlot, Hint } from 'react-vis';
-import Interactive from './Interactive';
+import { Borders, FlexibleXYPlot, LineMarkSeries, LineSeries, XAxis, YAxis } from 'react-vis';
+import { tickFormatter } from 'src/utils/utils';
+import VoronoiComponent from './Voronoi';
 
 interface IProps {
-    onWheelXY: (e: React.WheelEvent<Element>) => void,
-    onBrushEnd: (area: IArea) => void,
-    onDrag: (area: IArea) => void,
-    chartBounds: IChartBounds,
+    chartBounds: IArea,
     showVoronoi?: boolean,
-    voronoiData: IDatapoint[],
-}
-interface IState {
-    crossHairPoint: IDatapoint | undefined,
-    height: number,
-    width: number
+    simplyfiyData?: boolean,
+    data: IDatapoint[][],
+    updateChartBounds: (newArea: IArea) => void,
+    increaseRenderCount: () => void,
+    setHovering: (datapoint?: IDatapoint) => void,
 }
 @autobind
-export default class AdvancedVoronio extends React.PureComponent<IProps, IState> {
-    constructor(props: IProps) {
-        super(props);
-        this.state = {
-            crossHairPoint: undefined,
-            height: 0,
-            width: 0
-        }
-    }
+export default class AdvancedVoronio extends React.PureComponent<IProps> {
 
-    public componentDidMount(): void {
-        const container = document.getElementById('graphContainer');
-        this.setState({
-            height: container ? container.clientHeight : 0,
-            width: container ? container.clientWidth : 0,
+    private nodes = memoizeOne(
+        (data: IDatapoint[][] ) => {
+            return [].concat.apply([], data);
         });
 
+    constructor(props: IProps) {
+        super(props);
+    }
+
+    public componentDidUpdate(): void {
+        this.props.increaseRenderCount();
     }
     public render(): JSX.Element {
-        const { voronoiData, chartBounds } = this.props;
-        const { crossHairPoint } = this.state;
+        const { data, chartBounds, updateChartBounds, setHovering, showVoronoi, simplyfiyData } = this.props;
+        let Series: any;
+        if (simplyfiyData) {
+            Series = LineMarkSeries;
+        } else {
+            Series = LineSeries;
+        }
         return (
-            <div style={{ width: '100%', height: '100%', position: 'absolute', top: '0' }}>
+            <div style={{ width: '1260px', height: '500px', position: 'absolute', top: '16px' }}>
                 <FlexibleXYPlot
                     yDomain={[chartBounds.bottom, chartBounds.top]}
                     margin={{ left: 40 }}
                     dontCheckIfEmpty={true}
                     xDomain={[chartBounds.left, chartBounds.right]}>
-                    {crossHairPoint ? this.renderHint() : null}
+                    <XAxis title="X Axis" position="end" />
+                    <YAxis title="Y Axis" tickFormat={tickFormatter} />
+                    {
+                        data.map((series: IDatapoint[], index: number) =>
+                            <Series
+                                key={index}
+                                data={series}
+                            />
+                        )
+                    }
+                    <Borders style={{ all: { fill: '#fff' } }} />
                 </FlexibleXYPlot>
-                <Interactive
-                    voronoiData={ voronoiData}
-                    updateArea={this.updateArea}
-                    {...this.props} />
+                <VoronoiComponent
+                    chartBounds={chartBounds}
+                    voronoiData={this.nodes(data)}
+                    updateArea={updateChartBounds}
+                    onNearestX={setHovering}
+                    showVoronoi={showVoronoi}
+                    key={"voronoi"} />
             </div>
-        );
-    }
-
-    private updateArea(): void {
-        // tslint:disable-next-line:no-console
-        console.log('Not in this component');
-    }
-    private renderHint(): JSX.Element {
-        const { crossHairPoint } = this.state;
-        return (
-            <Hint key='hint' value={crossHairPoint} />
         );
     }
 }

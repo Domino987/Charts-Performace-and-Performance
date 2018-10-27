@@ -2,8 +2,8 @@ import { Card, CardActions, CardContent, CardHeader, Checkbox, createStyles, For
 import autobind from 'autobind-decorator';
 import memoizeOne from 'memoize-one';
 import React, { PureComponent } from 'react';
-import { FlexibleWidthXYPlot, Hint, HorizontalGridLines, LineSeries, VerticalGridLines, Voronoi, XAxis, YAxis } from 'react-vis';
-import { formatHint } from '../utils/utils';
+import { FlexibleWidthXYPlot, Hint, HorizontalGridLines, LineSeries, MarkSeries, VerticalGridLines, Voronoi, XAxis, YAxis } from 'react-vis';
+import { formatHint, tickFormatter } from '../utils/utils';
 
 const styles = (theme: Theme) => createStyles({
 
@@ -23,7 +23,6 @@ class SimpleVoronoiChart extends PureComponent<IProps, IState> {
 
     private rendered = 0;
 
-
     private nodes = memoizeOne(
         (data: IDatapoint[][]) => {
             return [].concat.apply([], data);
@@ -32,7 +31,7 @@ class SimpleVoronoiChart extends PureComponent<IProps, IState> {
         super(props);
         this.state = {
             hoveringDatapoint: null,
-            showVoronoi: true,
+            showVoronoi: false,
         }
     }
     public render() {
@@ -55,14 +54,13 @@ class SimpleVoronoiChart extends PureComponent<IProps, IState> {
                             label="Show Voronoi"
                         />
                     } />
-                <CardContent>
+                <CardContent
+                    style={{ position: 'relative' }}>
                     <FlexibleWidthXYPlot
                         height={500}
-                        xType={'time'}
-                        onMouseLeave={this.onLeave}
-                        margin={{ left: 0 }}>
+                        onMouseLeave={this.onLeave}>
                         <XAxis title="X Axis" position="end" />
-                        <YAxis title="Y Axis" />
+                        <YAxis title="Y Axis" tickFormat={tickFormatter} />
 
                         <HorizontalGridLines />
                         <VerticalGridLines />
@@ -71,19 +69,25 @@ class SimpleVoronoiChart extends PureComponent<IProps, IState> {
                                 <LineSeries
                                     key={index}
                                     data={series}
-                                />
-                            )
-                        }
-                        {
-                            hoveringDatapoint ? <Hint 
-                            value={hoveringDatapoint} 
-                            format={formatHint}
-                            /> : null
+                                />)
                         }
                         <Voronoi
                             nodes={this.nodes(dataPoints)}
                             onHover={this.onHover}
                             polygonStyle={showVoronoi ? { stroke: 'red' } : {}} />
+                        {
+                            hoveringDatapoint ? <Hint
+                                value={hoveringDatapoint}
+                                format={formatHint}
+                            /> : null
+                        }
+                        {
+                            hoveringDatapoint ?
+                                <MarkSeries
+                                    data={[hoveringDatapoint]}
+                                    color={'red'} />
+                                : null
+                        }
                     </FlexibleWidthXYPlot>
                 </CardContent>
                 <CardActions>

@@ -1,18 +1,15 @@
 import autobind from 'autobind-decorator';
-import { scaleLinear} from 'd3-scale';
+import { scaleLinear } from 'd3-scale';
 import * as React from 'react';
 import { FlexibleXYPlot, Voronoi } from 'react-vis';
 import Highlight from './Highlight';
 
 interface IProps {
-    onMouseLeave: () => void,    
-    updateArea: (newArea: IChartBounds) => void,
+    updateArea: (newArea: IArea) => void,
     onNearestX: (datapoint: IDatapoint, event?: object | undefined) => void,
-    chartBounds: IChartBounds,
+    chartBounds: IArea,
     showVoronoi?: boolean,
-    voronoiData: IDatapoint[],
-    height: number,
-    width: number
+    voronoiData: IDatapoint[]
 }
 @autobind
 export default class VoronoiComponent extends React.PureComponent<IProps> {
@@ -22,19 +19,18 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
     }
 
     public render() {
-        const { onMouseLeave, onNearestX, chartBounds, voronoiData, height, width, showVoronoi } = this.props;
+        const { onNearestX, chartBounds, voronoiData, showVoronoi } = this.props;
         return (
-            <div 
-                style={{ width: '100%', height: '100%', position: 'absolute', top: '0' }}
+            <div
+                style={{ width: '100%', height: '100%', position: 'absolute', top: '0',marginLeft: 40 }}
                 onContextMenu={this.onContextClick}>
                 <FlexibleXYPlot
-                    xType={'time'}
-                    onMouseLeave={onMouseLeave}
                     yDomain={[chartBounds.bottom, chartBounds.top]}
                     onWheel={this.onWheelXY}
                     dontCheckIfEmpty={true}
                     xDomain={[chartBounds.left, chartBounds.right]}>
                     <Voronoi
+                        extent={[[0,10], [1210, 500-40]]}
                         nodes={voronoiData}
                         onHover={onNearestX}
                         polygonStyle={showVoronoi ? { stroke: 'red' } : {}}
@@ -42,9 +38,9 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
                     <Highlight
                         marginBottom={60}
                         marginTop={10}
-                        marginLeft={50}
-                        innerWidth={width}
-                        innerHeight={height - 40}
+                        marginLeft={0}
+                        innerWidth={1210}
+                        innerHeight={450}
                         onBrushEnd={this.onBrushEnd}
                         onDrag={this.onDrag}
                     />
@@ -55,29 +51,29 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
     /**
      * Drags the graph by the selected area
      * 
-     * @param { IChartBounds } area The area to drag  
+     * @param { IArea } area The area to drag  
      * 
      */
-    private onDrag(area: IChartBounds): void {
+    private onDrag(area: IArea): void {
         if (area) {
             const { chartBounds, updateArea } = this.props;
             const newArea = {
                 bottom: chartBounds.bottom + (area.top - area.bottom),
-                left: new Date(chartBounds.left.getTime() - (area.right.getTime() - area.left.getTime())),
-                right: new Date(chartBounds.right.getTime() - (area.right.getTime() - area.left.getTime())),
+                left: chartBounds.left - (area.right - area.left),
+                right: chartBounds.right - (area.right - area.left),
                 top: chartBounds.top + (area.top - area.bottom),
             }
-            updateArea(newArea);            
+            updateArea(newArea);
         }
     }
     /**
      * Zooms the graph to the selceted area by drawing 
      * 
-     * @param { IChartBounds } area
+     * @param { IArea } area
      * The drawn area  
      * 
      */
-    private onBrushEnd(area: IChartBounds): void {
+    private onBrushEnd(area: IArea): void {
         if (area) {
             this.props.updateArea(area);
         }
@@ -90,7 +86,9 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
      */
     private onWheelXY(e: React.WheelEvent): void {
         e.preventDefault();
-        const { width, height ,chartBounds } = this.props;
+        const width = 0;
+        const height = 0;
+        const { chartBounds } = this.props;
 
         let xLoc = e.nativeEvent.offsetX;
         let yLoc = e.nativeEvent.offsetY;
@@ -100,8 +98,8 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
         }
         const xValue = scaleLinear().domain([chartBounds.left, chartBounds.right]).range([0, width]).invert(xLoc);
         const yValue = scaleLinear().domain([chartBounds.bottom, chartBounds.top]).range([height, 0]).invert(yLoc);
-        const maxDate = chartBounds.right.getTime();
-        const minDate = chartBounds.left.getTime();
+        const maxDate = chartBounds.right;
+        const minDate = chartBounds.left;
         const maxY = chartBounds.top;
         const minY = chartBounds.bottom;
         let multiplicator = 1;
@@ -110,8 +108,8 @@ export default class VoronoiComponent extends React.PureComponent<IProps> {
         }
         const newArea = {
             bottom: minY + ((yValue - minY) / 10 * multiplicator),
-            left: new Date(minDate + ((xValue - minDate) / 10 * multiplicator)),
-            right: new Date(maxDate - ((maxDate - xValue) / 10 * multiplicator)),
+            left: minDate + ((xValue - minDate) / 10 * multiplicator),
+            right: maxDate - ((maxDate - xValue) / 10 * multiplicator),
             top: maxY - ((maxY - yValue) / 10 * multiplicator),
         }
         this.props.updateArea(newArea);
