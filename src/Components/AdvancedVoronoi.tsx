@@ -44,8 +44,6 @@ export default class AdvancedVoronio extends React.PureComponent<IProps> {
                     margin={{ left: 40 }}
                     dontCheckIfEmpty={true}
                     xDomain={[chartBounds.left, chartBounds.right]}>
-                    <XAxis title="X Axis" position="end" />
-                    <YAxis title="Y Axis" tickFormat={tickFormatter} />
                     {
                         data.map((series: IDatapoint[], index: number) =>
                             <Series
@@ -55,6 +53,8 @@ export default class AdvancedVoronio extends React.PureComponent<IProps> {
                         )
                     }
                     <Borders style={{ all: { fill: '#fff' } }} />
+                    <XAxis title="X Axis" position="end" />
+                    <YAxis title="Y Axis" tickFormat={tickFormatter} />
                 </FlexibleXYPlot>
                 <VoronoiComponent
                     chartBounds={chartBounds}
