@@ -61,7 +61,7 @@ class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
                                 label="Show Voronoi"
                             />
                             {
-                                isZooming ? <ZoomOut onClick={this.zoomOut} /> : null
+                                isZooming && <ZoomOut onClick={this.zoomOut} />
                             }
                         </div>
                     } />
@@ -73,16 +73,15 @@ class AdvancedVoronoiChart extends PureComponent<IProps, IState> {
                         xDomain={[chartBounds.left, chartBounds.right]}
                         margin={{ left: 40 }}>
                         {
-                            hoveringDatapoint ? <Hint
+                            hoveringDatapoint && <Hint
                                 value={hoveringDatapoint}
                                 format={formatHint}
-                            /> : null
+                            />
                         }{
-                            hoveringDatapoint ?
+                            hoveringDatapoint &&
                                 <MarkSeries
                                     data={[hoveringDatapoint]}
                                     color={'red'} />
-                                : null
                         }
                     </XYPlot>
                     <AdvancedVoronio

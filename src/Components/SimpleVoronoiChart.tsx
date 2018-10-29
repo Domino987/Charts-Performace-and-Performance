@@ -76,17 +76,16 @@ class SimpleVoronoiChart extends PureComponent<IProps, IState> {
                             onHover={this.onHover}
                             polygonStyle={showVoronoi ? { stroke: 'red' } : {}} />
                         {
-                            hoveringDatapoint ? <Hint
+                            hoveringDatapoint && <Hint
                                 value={hoveringDatapoint}
                                 format={formatHint}
-                            /> : null
+                            />
                         }
                         {
-                            hoveringDatapoint ?
+                            hoveringDatapoint &&
                                 <MarkSeries
                                     data={[hoveringDatapoint]}
                                     color={'red'} />
-                                : null
                         }
                     </FlexibleWidthXYPlot>
                 </CardContent>

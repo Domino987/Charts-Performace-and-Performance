@@ -51,18 +51,16 @@ class SimpleInteraction extends PureComponent<IProps, IState> {
                             )
                         }
                         {
-                            hoveringDatapoint ?
+                            hoveringDatapoint &&
                                 <Hint
                                     format={formatHint}
                                     value={hoveringDatapoint} />
-                                : null
                         }
                         {
-                            hoveringDatapoint ?
+                            hoveringDatapoint &&
                                 <MarkSeries
                                     data={[hoveringDatapoint]}
                                     color={'red'} />
-                                : null
                         }
                     </FlexibleWidthXYPlot>
                 </CardContent>
