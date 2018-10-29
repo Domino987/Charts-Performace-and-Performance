@@ -11,6 +11,7 @@ import AdvancedVoronioChart from './AdvancedVoronoiChart';
 import DouglasPeucker from './DouglasPeucker';
 import InteractionSeperation from './InteractionSeperation';
 import PlainXYPlot from './PlainXYPlot';
+import ReactVisInteraction from './ReactVisInteraction';
 import SimpleInteraction from './SimpleInteraction';
 import SimpleVoronoiChart from './SimpleVoronoiChart';
 import VoronoiDiagram from './VoronoiDiagram';
@@ -60,6 +61,7 @@ class App extends PureComponent<IProps, IState> {
 
   private componentArray = [
     PlainXYPlot,
+    ReactVisInteraction,
     SimpleInteraction,
     VoronoiDiagram,
     SimpleVoronoiChart,
@@ -83,7 +85,7 @@ class App extends PureComponent<IProps, IState> {
     this.state = {
       datapoints: 100,
       seriesNumber: 1,
-      step: 5,
+      step: 0,
     };
 
     for (let i = 0; i < 5; i++) {

@@ -18,7 +18,10 @@ interface IProps {
 export default class AdvancedVoronio extends React.PureComponent<IProps> {
 
     private nodes = memoizeOne(
-        (data: IDatapoint[][] ) => {
+        (data: IDatapoint[][] ): IDatapoint[] => {
+            if(data.length === 1){
+                return data[0];
+            }
             return [].concat.apply([], data);
         });
 

@@ -1,20 +1,15 @@
-import { Card, CardActions, CardContent,CardHeader, createStyles, Theme, withStyles, WithStyles } from '@material-ui/core';
+import { Card, CardActions, CardContent,CardHeader } from '@material-ui/core';
 import autobind from 'autobind-decorator';
 import React, { PureComponent } from 'react';
 import { FlexibleWidthXYPlot, LineSeries, XAxis, YAxis } from 'react-vis';
 import { tickFormatter } from 'src/utils/utils';
 
-const styles = (theme: Theme) => createStyles({
-});
-
-interface IProps extends WithStyles<typeof styles> {
+interface IProps {
     dataPoints: IDatapoint[][];
 }
 
-
-
 @autobind
-class PlainXYPlot extends PureComponent<IProps> {
+export default class PlainXYPlot extends PureComponent<IProps> {
 
     private rendered = 0;
 
@@ -52,4 +47,3 @@ class PlainXYPlot extends PureComponent<IProps> {
     }
 
 }
-export default withStyles(styles)(PlainXYPlot);

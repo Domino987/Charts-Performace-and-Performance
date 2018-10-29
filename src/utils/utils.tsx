@@ -16,6 +16,9 @@ export function formatHint(point: IDatapoint): [{ title: string, value: string }
 
 
 export function tickFormatter(n: number): number | string {
+    if( n >= 1000000){
+        return n / 1000000 + "M";
+    }
     if (n >= 1000) {
         return n / 1000 + "K";
     }
