@@ -12,7 +12,7 @@ export default function InteractionSeperation({ }: IProps) {
     <CardHeader
       title={"Separation of interaction and rendering"} />
     <CardContent style={{textAlign: 'center'}}>
-      <img src='./separation.jpg' alt='separation' />
+      <img src='./separation.jpg' alt='separation' height={420}/>
     </CardContent>
   </Card>
 }
